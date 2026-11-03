@@ -140,4 +140,14 @@ se afirma que hayan sido ejecutadas.
 
 ## Más información
 
-No se registran revisiones adicionales en esta versión inicial del ADR.
+### Revisión 1. Cambio en el proveedor de notificaciones
+
+**Cambio recibido:** El proveedor externo de notificaciones modificó su interfaz de comunicación y la forma en que reporta los errores de envío.
+
+**Impacto sobre la alternativa seleccionada:** El cambio afecta al componente independiente que procesa las notificaciones pendientes, particularmente a la integración encargada de comunicarse con el proveedor e interpretar sus respuestas. La generación y el almacenamiento de constancias, así como el registro persistente de notificaciones pendientes, no necesitan modificarse por este cambio.
+
+**Vigencia de la decisión:** Se mantiene la propuesta de procesamiento asíncrono mediante eventos persistidos. La separación entre la generación de constancias y el envío de notificaciones permite localizar la adaptación en el componente de integración, sin alterar el flujo principal. La decisión original sigue siendo justificable porque continúa respondiendo a RT2, RT3 y RT4.
+
+**Consecuencia o riesgo que debe revisarse:** Debe revisarse el riesgo de interpretar incorrectamente los nuevos códigos o respuestas de error. Una clasificación incorrecta podría impedir reintentos necesarios o provocar reintentos innecesarios.
+
+**Comprobación que se agrega:** Incorporar una prueba de integración que utilice las nuevas respuestas de error del proveedor y compruebe que el componente las interpreta correctamente, clasifica los fallos y determina si corresponde reintentar el envío o mantener la notificación pendiente. La prueba debe contemplar errores temporales y errores que no se resuelven mediante un reintento. También debe verificarse que la adaptación no modifica ni duplica los registros de notificación existentes.
